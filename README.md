@@ -63,3 +63,8 @@ La structure interne de la	Terre	est géologiquement active , le
 détaillés : Histoire de la	Terre	et Histoire évolutive du vivant
 vivant . L'âge de la	Terre	est aujourd'hui estimé à 4,54
 ```
+
+## TESTS 
+
+Pour les tests du scripts, j'ai utilisé l'article wikipedia Terre (il est traduit dans beaucoup de langues).
+Vous pouvez retrouver les fichiers texte de test dans le dossier `./test/` sous la forme `code_langue.txt` et les sorties du script sous la forme `code_langue_concordances.tsv`.
