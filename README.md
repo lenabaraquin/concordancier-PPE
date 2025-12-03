@@ -26,8 +26,6 @@ Il est possible de créer un environnement dédié avec `uv` et d'y installer le
 uv venv --python 3.11.6 concordancier
 uv pip install -r requirements.txt
 ```
-```
-```
 
 ## Usage
 
@@ -42,15 +40,13 @@ Ils doivent être passés dans sous cette forme :
 ```
 python concordancier.py code_langue chemin/vers/fichier/texte taille_fenetre mot_cible
 ```
-```
-```
 
 ## Exemple 
 
 Pour un texte français avec pour mot cible "Terre" et pour une fenêtre de taille 5 :
 
 ```
-python concordancier.py fr text.txt 5 Terre
+python concordancier.py fr exemple.txt 5 Terre
 ```
 
 La sortie attendue a la forme suivante :
