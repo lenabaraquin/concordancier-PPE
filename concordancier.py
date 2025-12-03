@@ -1,4 +1,5 @@
 import nltk
+import shekar
 import argparse
 
 nltk.download("punkt_tab", quiet=True)
@@ -23,37 +24,45 @@ window_size = args.window_size
 key_word = args.key_word
 
 
-def select_tokenizer(language: str) -> function:
+def select_tokenizer(language: str) -> "function":
     """retourne le tokenizer correspondant à la langue donnée en entrée.
     l'entrée doit être le code iso de la langue, soit (en|fa|fr)."""
     match language:
         case "en":
             tokenizer = nltk.tokenize.word_tokenize
         case "fa":
-            tokenizer = nltk.tokenize.word_tokenize
+
+            def tokenizer(text: str) -> list:
+                _normalizer = shekar.Normalizer()
+                _tokenizer = shekar.WordTokenizer()
+                return list(_tokenizer(_normalizer(text)))
         case "fr":
             tokenizer = nltk.tokenize.word_tokenize
         case _:
-            print("Le code iso entré n'est pas reconnu.")
+            raise ValueError("Le code iso entré n'est pas reconnu.")
     return tokenizer
 
 
-def select_lemmatizer(language: str) -> function:
-    """retourne le lemmatizer correspondant à la langue donnée en entrée.
+def select_stemmer(language: str) -> "function":
+    """retourne le stemmer correspondant à la langue donnée en entrée.
     l'entrée doit être le code iso de la langue, soit (en|fa|fr)."""
     match language:
         case "en":
-            lemmatizer = nltk.stem.SnowballStemmer("english").stem
+            stemmer = nltk.stem.SnowballStemmer("english").stem
         case "fa":
-            lemmatizer = nltk.stem.SnowballStemmer("english").stem
+
+            def stemmer(word: str) -> str:
+                _normalizer = shekar.Normalizer()
+                _stemmer = shekar.Stemmer()
+                return _stemmer(_normalizer(word))
         case "fr":
-            lemmatizer = nltk.stem.SnowballStemmer("french").stem
+            stemmer = nltk.stem.SnowballStemmer("french").stem
         case _:
-            print("Le code iso entré n'est pas reconnu.")
-    return lemmatizer
+            raise ValueError("Le code iso entré n'est pas reconnu.")
+    return stemmer
 
 
-lemmatizer = select_lemmatizer(lang)
+stemmer = select_stemmer(lang)
 tokenizer = select_tokenizer(lang)
 
 with open(path, "r") as f:
@@ -61,20 +70,20 @@ with open(path, "r") as f:
 
 tokenzied_text = tokenizer(text)
 
-key_stem = lemmatizer(key_word)
+key_stem = stemmer(key_word)
 
 for i in range(len(tokenzied_text)):
     token = tokenzied_text[i]
-    if lemmatizer(token) == key_stem:
+    if stemmer(token) == key_stem:
         if i < window_size:
-            before_context = " ".join(tokenzied_text[:i])
-            after_context = " ".join(tokenzied_text[i + 1 : i + (window_size + 1)])
-            print(f"{before_context}\t{token}\t{after_context}")
+            previous_context = " ".join(tokenzied_text[:i])
+            next_context = " ".join(tokenzied_text[i + 1 : i + (window_size + 1)])
+            print(f"{previous_context}\t{token}\t{next_context}")
         elif i > len(tokenzied_text) - (window_size + 1):
-            before_context = " ".join(tokenzied_text[i - window_size : i])
-            after_context = " ".join(tokenzied_text[i + 1 :])
-            print(f"{before_context}\t{token}\t{after_context}")
+            previous_context = " ".join(tokenzied_text[i - window_size : i])
+            next_context = " ".join(tokenzied_text[i + 1 :])
+            print(f"{previous_context}\t{token}\t{next_context}")
         else:
-            before_context = " ".join(tokenzied_text[i - window_size : i])
-            after_context = " ".join(tokenzied_text[i + 1 : i + (window_size + 1)])
-            print(f"{before_context}\t{token}\t{after_context}")
+            previous_context = " ".join(tokenzied_text[i - window_size : i])
+            next_context = " ".join(tokenzied_text[i + 1 : i + (window_size + 1)])
+            print(f"{previous_context}\t{token}\t{next_context}")
